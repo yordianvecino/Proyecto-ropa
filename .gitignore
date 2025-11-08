@@ -14,3 +14,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Yarn Berry / PnP (guardar configuraciones necesarias, ignorar cache pesada)
+.yarn/*
+!.yarn/releases/
+!.yarn/plugins/
+!.yarn/patches/
+!.yarn/build-state.yml
+!.yarn/install-state.gz
+# Asegúrate de COMMITEAR `yarn.lock` y `.pnp.cjs`

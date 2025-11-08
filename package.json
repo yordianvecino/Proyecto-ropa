@@ -12,12 +12,11 @@
 		"prisma:migrate": "prisma migrate dev",
 		"prisma:studio": "prisma studio",
 		"prisma:seed": "node prisma/seed.js",
-		"db:test": "node scripts/test-db-connection.js",
-		"preinstall": "node scripts/print-npm-env.js"
+		"db:test": "node scripts/test-db-connection.js"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.45.0",
 		"@prisma/client": "^5.7.0",
+		"@supabase/supabase-js": "^2.45.0",
 		"@types/bcryptjs": "^2.4.6",
 		"@types/node": "^20",
 		"@types/react": "^18",
