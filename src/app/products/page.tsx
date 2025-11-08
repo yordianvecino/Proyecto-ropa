@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import { getPrisma } from '@/lib/prisma'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/format'
@@ -8,14 +10,16 @@ async function getProducts(): Promise<Array<{ id: string; name: string; price: n
   if (prisma) {
     try {
       const items = await prisma.product.findMany({ where: { active: true }, orderBy: { createdAt: 'desc' }, take: 40, include: { category: true } })
-      return items.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        slug: p.slug,
-        price: p.price / 100,
-        imageUrl: p.imageUrl,
-        category: p.category?.name ?? null,
-      }))
+      if (items.length > 0) {
+        return items.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price: p.price / 100,
+          imageUrl: p.imageUrl,
+          category: p.category?.name ?? null,
+        }))
+      }
     } catch {/* fallback to supabase */}
   }
   const supa = getSupabaseAdmin()

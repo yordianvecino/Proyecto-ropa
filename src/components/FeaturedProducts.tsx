@@ -21,13 +21,15 @@ async function getFeatured(): Promise<ProductLike[]> {
         take: 8,
         include: { category: true },
       })
-      return products.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
-        id: p.id,
-        name: p.name,
-        price: p.price / 100,
-        imageUrl: p.imageUrl,
-        category: p.category?.name ?? null,
-      }))
+      if (products.length > 0) {
+        return products.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price / 100,
+          imageUrl: p.imageUrl,
+          category: p.category?.name ?? null,
+        }))
+      }
     } catch {/* ignorar y usar fallback supabase */}
   }
   // Fallback Supabase si Prisma no disponible
@@ -51,6 +53,9 @@ async function getFeatured(): Promise<ProductLike[]> {
   }
   return []
 }
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function FeaturedProducts() {
   const products = await getFeatured()
