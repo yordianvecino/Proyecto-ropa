@@ -18,7 +18,7 @@ export default function CarritoPage() {
       setError('Configura WHATSAPP_PHONE en .env para habilitar WhatsApp')
       return
     }
-    const msg = buildWhatsAppMessage(items)
+  const msg = buildWhatsAppMessage(items, { includeImages: true })
     const url = buildWhatsAppUrl(phone, msg)
     window.open(url, '_blank')
   }
