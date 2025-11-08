@@ -23,3 +23,17 @@ export function getSupabaseAnon() {
 export function getSupabaseRead() {
   return getSupabaseAdmin() ?? getSupabaseAnon()
 }
+
+// Convierte una ruta de Storage (e.g., "folder/image.jpg") a URL pública completa.
+// Si ya viene una URL http(s), la retorna tal cual.
+export function toPublicStorageUrl(pathOrUrl?: string | null): string | null {
+  if (!pathOrUrl) return null
+  const v = String(pathOrUrl)
+  if (v.startsWith('http://') || v.startsWith('https://')) return v
+  const url = process.env.SUPABASE_URL
+  const bucket = DEFAULT_BUCKET
+  if (!url) return null
+  // Evitar duplicar si ya contiene el prefijo public
+  const clean = v.replace(/^\/+/, '')
+  return `${url}/storage/v1/object/public/${bucket}/${clean}`
+}

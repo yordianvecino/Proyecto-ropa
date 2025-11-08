@@ -1,5 +1,5 @@
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseRead } from '@/lib/supabase'
+import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
 import { AddButton, WhatsAppButton } from '@/components/ProductCard'
 import { formatCurrency } from '@/lib/format'
 
@@ -33,7 +33,7 @@ async function getFeatured(): Promise<ProductLike[]> {
           id: p.id,
           name: p.name,
           price: (p.price ?? 0) / 100,
-          imageUrl: p.imageUrl ?? null,
+          imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
       }
@@ -49,7 +49,7 @@ async function getFeatured(): Promise<ProductLike[]> {
           id: p.id,
           name: p.name,
           price: (p.price ?? 0) / 100,
-          imageUrl: p.imageUrl ?? null,
+          imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
       }
@@ -79,7 +79,7 @@ async function getFeatured(): Promise<ProductLike[]> {
           id: p.id,
           name: p.name,
           price: p.price / 100,
-          imageUrl: p.imageUrl ?? null,
+          imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
       }
@@ -98,7 +98,7 @@ export default async function FeaturedProducts() {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Productos Destacados</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
+          {/* {products.map((product) => (
             <div key={product.id} className="border rounded-lg shadow-sm bg-white overflow-hidden flex flex-col">
               {product.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -118,7 +118,7 @@ export default async function FeaturedProducts() {
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </section>
