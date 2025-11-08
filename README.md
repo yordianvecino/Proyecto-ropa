@@ -112,7 +112,7 @@ El checkout principal se realiza por WhatsApp: el cliente abre un chat con un me
 1. Configura tu número en `.env` (E.164, sin signos):
 
 ```ini
-NEXT_PUBLIC_WHATSAPP_PHONE="573001234567"
+NEXTPUBLIC_WHATSAPP_PHONE="573001234567"
 ```
 
 2. En la página `/carrito`, el botón “Enviar pedido por WhatsApp” generará el mensaje y abrirá el chat en una nueva pestaña.

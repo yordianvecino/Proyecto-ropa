@@ -14,7 +14,7 @@ export function AddButton({ product }: { product: Product }) {
 }
 
 export function WhatsAppButton({ product, quantity = 1 }: { product: Product, quantity?: number }) {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || ''
+  const phone = process.env.NEXTPUBLIC_WHATSAPP_PHONE || ''
   const disabled = !phone
   const handleClick = () => {
     if (!phone) return
@@ -26,7 +26,7 @@ export function WhatsAppButton({ product, quantity = 1 }: { product: Product, qu
     <button
       onClick={handleClick}
       disabled={disabled}
-      title={disabled ? 'Configura NEXT_PUBLIC_WHATSAPP_PHONE en .env' : 'Comprar por WhatsApp'}
+      title={disabled ? 'Configura NEXTPUBLIC_WHATSAPP_PHONE en .env' : 'Comprar por WhatsApp'}
       className={`border border-green-600 text-green-700 hover:bg-green-50 px-3 py-2 rounded-lg transition-colors ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       WhatsApp

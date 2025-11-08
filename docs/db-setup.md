@@ -59,6 +59,6 @@ Deberías ver `DB OK` si la conexión es válida.
 Agrega en Project Settings > Environment Variables:
 - `DATABASE_URL` (la misma URL del paso 2)
 - `NEXTAUTH_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
-- Otras: `NEXT_PUBLIC_WHATSAPP_PHONE`
+- Otras: `NEXTPUBLIC_WHATSAPP_PHONE`
 
 Luego redeploy.
