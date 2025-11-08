@@ -1,5 +1,6 @@
 import { getPrisma } from '@/lib/prisma'
 import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
+import { unstable_noStore as noStore } from 'next/cache'
 import { AddButton, WhatsAppButton } from '@/components/ProductCard'
 import { formatCurrency } from '@/lib/format'
 
@@ -15,6 +16,7 @@ type ProductLike = {
 }
 
 async function getFeatured(): Promise<ProductLike[]> {
+  noStore()
   // 1. Supabase primero (fuente canónica)
   const supa = getSupabaseRead()
   if (process.env.NODE_ENV !== 'production') {
@@ -48,25 +50,7 @@ async function getFeatured(): Promise<ProductLike[]> {
           category: p.category?.name ?? undefined,
         }))
       }
-      // Si no hay destacados, traer recientes
-      const res2 = await supa
-        .from('Product')
-        .select('id,name,price,imageUrl,categoryId,active,createdAt,featured,category:Category(name)')
-        .eq('active', true)
-        .order('createdAt', { ascending: false })
-        .limit(8)
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('[FeaturedProducts] supabase-recent', { error: res2.error?.message, count: res2.data?.length ?? 0 })
-      }
-      if (!res2.error && res2.data && res2.data.length > 0) {
-        return res2.data.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          price: (p.price ?? 0) / 100,
-          imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
-          category: p.category?.name ?? undefined,
-        }))
-      }
+      // No hacer fallback a recientes para evitar confusión: mostrar ninguno si no hay destacados
     } catch (e: any) {
       if (process.env.NODE_ENV !== 'production') {
         console.log('[FeaturedProducts] supabase-error', e?.message || String(e))
@@ -85,14 +69,8 @@ async function getFeatured(): Promise<ProductLike[]> {
         take: 8,
         include: { category: true },
       })
-      const base = (byFeatured?.length ?? 0) > 0 ? byFeatured : await (prisma as any).product.findMany({
-        where: { active: true },
-        orderBy: { createdAt: 'desc' },
-        take: 8,
-        include: { category: true },
-      })
-      if (base && base.length > 0) {
-        return base.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
+      if (byFeatured && byFeatured.length > 0) {
+        return byFeatured.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
           id: p.id,
           name: p.name,
           price: p.price / 100,
