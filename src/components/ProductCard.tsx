@@ -19,7 +19,8 @@ export function WhatsAppButton({ product, quantity = 1 }: { product: Product, qu
   const disabled = !phone || loading
   const handleClick = () => {
     if (!phone) return
-    const msg = buildWhatsAppMessage([{ product, quantity }])
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const msg = buildWhatsAppMessage([{ product: { ...product }, quantity }], { includeImages: true, includeLinks: true, siteUrl: origin })
     const url = buildWhatsAppUrl(phone, msg)
     window.open(url, '_blank')
   }

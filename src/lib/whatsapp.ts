@@ -5,6 +5,7 @@ type WhatsAppBuildOptions = {
   currencyHint?: string
   includeImages?: boolean
   siteUrl?: string // para construir enlaces absolutos si los hubiera
+  includeLinks?: boolean // futuro: añadir enlace a detalle producto
 }
 
 export function buildWhatsAppMessage(items: CartItem[], opts?: WhatsAppBuildOptions) {
@@ -23,8 +24,16 @@ export function buildWhatsAppMessage(items: CartItem[], opts?: WhatsAppBuildOpti
     lines.push(`• ${product.name}  x${quantity}  = ${formatCurrency(lineTotal)}`)
     if (product.category) lines.push(`  Categoría: ${product.category}`)
     lines.push(`  Ref: ${product.id}`)
-    if (includeImages && product.image && /^https?:\/\//.test(product.image)) {
-      lines.push(`  Imagen: ${product.image}`)
+    // Enlace al producto o imagen para que WhatsApp muestre preview
+    if ((opts?.includeLinks || includeImages)) {
+      const slug = (product as any).slug as string | undefined
+      const siteUrl = opts?.siteUrl
+      if (opts?.includeLinks && slug && siteUrl) {
+        lines.push(`  Ver producto: ${siteUrl}/producto/${slug}`)
+      } else if (includeImages && product.image && /^https?:\/\//.test(product.image)) {
+        // Si no hay slug, usa imagen directa para preview
+        lines.push(`  Ver imagen: ${product.image}`)
+      }
     }
     lines.push('')
   }
