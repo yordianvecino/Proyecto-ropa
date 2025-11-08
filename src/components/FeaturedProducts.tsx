@@ -1,5 +1,5 @@
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseAdmin } from '@/lib/supabase'
+import { getSupabaseRead } from '@/lib/supabase'
 import { AddButton, WhatsAppButton } from '@/components/ProductCard'
 import { formatCurrency } from '@/lib/format'
 
@@ -16,7 +16,7 @@ type ProductLike = {
 
 async function getFeatured(): Promise<ProductLike[]> {
   // 1. Supabase primero (fuente canónica)
-  const supa = getSupabaseAdmin()
+  const supa = getSupabaseRead()
   if (supa) {
     try {
       // Destacados
