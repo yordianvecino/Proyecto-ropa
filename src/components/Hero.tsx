@@ -10,9 +10,9 @@ const Hero = () => {
         </div>
         <p className="text-sm tracking-widest text-gray-500 mb-8">BOUTIQUE CRISTIANA VIRTUAL</p>
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-brand-black">Viste tu fe con estilo</h1>
-        <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-gray-700">
+        {/* <p className="text-lg md:text-xl mb-4 max-w-2xl mx-auto text-gray-700">
           Prendas inspiradas en la fe, con toques delicados y elegantes para cada ocasión.
-        </p>
+        </p> */}
         <RandomVerse />
         <div className="flex items-center justify-center gap-3">
           <a href="/productos" className="bg-brand-rose hover:bg-brand-pink text-white px-8 py-3 rounded-lg font-semibold transition-colors">Ver colección</a>

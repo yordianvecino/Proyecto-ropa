@@ -11,9 +11,9 @@ export default function CarritoPage() {
 
   function sendWhatsApp() {
     setError(null)
-    const phone = process.env.NEXTPUBLIC_WHATSAPP_PHONE || ''
+    const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || ''
     if (!phone) {
-      setError('Configura NEXTPUBLIC_WHATSAPP_PHONE en .env para habilitar WhatsApp')
+      setError('Configura NEXT_PUBLIC_WHATSAPP_PHONE en .env para habilitar WhatsApp')
       return
     }
     const msg = buildWhatsAppMessage(items)
