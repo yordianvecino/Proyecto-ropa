@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseRead } from '@/lib/supabase'
+import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
         name: p.name,
         slug: p.slug,
         price: p.price,
-        imageUrl: p.imageUrl,
+        imageUrl: toPublicStorageUrl(p.imageUrl),
         category: p.category?.name ?? null,
       })),
     })
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       name: p.name,
       slug: p.slug,
       price: p.price,
-      imageUrl: p.imageUrl,
+      imageUrl: toPublicStorageUrl(p.imageUrl),
       category: p.category?.name ?? null,
     })),
   })

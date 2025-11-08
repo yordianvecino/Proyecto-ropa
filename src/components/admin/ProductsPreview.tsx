@@ -41,7 +41,12 @@ export default function ProductsPreview({ pageSize = 8 }: { pageSize?: number })
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {items.map((p) => (
             <div key={p.id} className="border rounded-lg p-4">
-              <div className="h-28 bg-gray-100 rounded mb-3 flex items-center justify-center text-xs text-gray-500">Imagen</div>
+              {p.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.imageUrl} alt={p.name} className="h-28 w-full object-cover rounded mb-3 bg-gray-100" />
+              ) : (
+                <div className="h-28 bg-gray-100 rounded mb-3 flex items-center justify-center text-xs text-gray-500">Imagen</div>
+              )}
               <div className="text-sm font-medium line-clamp-2">{p.name}</div>
               <div className="text-xs text-gray-600 mb-2">{p.category || ''}</div>
               <div className="text-brand-gold font-bold">{formatCurrency((p.price || 0) / 100)}</div>

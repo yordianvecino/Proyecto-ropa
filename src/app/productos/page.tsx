@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import Link from 'next/link'
 import { AddButton, WhatsAppButton } from '@/components/ProductCard'
 import { formatCurrency } from '@/lib/format'
@@ -77,9 +79,14 @@ export default async function ProductosPage({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((product) => (
               <div key={product.id} className="rounded-lg border bg-white overflow-hidden">
-                <div className="h-48 bg-gray-100 flex items-center justify-center">
-                  <span className="text-gray-400">Imagen</span>
-                </div>
+                {product.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={product.imageUrl} alt={product.name} className="h-48 w-full object-cover bg-gray-100" />
+                ) : (
+                  <div className="h-48 bg-gray-100 flex items-center justify-center">
+                    <span className="text-gray-400">Imagen</span>
+                  </div>
+                )}
                 <div className="p-4">
                   <span className="text-xs text-brand-rose">{product.category ?? ''}</span>
                   <h3 className="mt-1 font-semibold text-gray-900">{product.name}</h3>
