@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseAdmin } from '@/lib/supabase'
+import { getSupabaseAdmin, toPublicStorageUrl } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/format'
 import Link from 'next/link'
 
@@ -72,9 +72,14 @@ export default async function ProductsPage({ searchParams }: { searchParams?: { 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {products.map(p => (
           <div key={p.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
-            <div className="h-56 bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-500 text-sm">Imagen</span>
-            </div>
+            {p.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={toPublicStorageUrl(p.imageUrl) ?? undefined} alt={p.name} className="h-56 w-full object-cover bg-gray-100" />
+            ) : (
+              <div className="h-56 bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-500 text-sm">Imagen</span>
+              </div>
+            )}
             <div className="p-5">
               <span className="text-xs uppercase tracking-wide text-brand-rose">{p.category ?? ''}</span>
               <h2 className="mt-2 font-semibold text-lg mb-3 line-clamp-2">{p.name}</h2>
