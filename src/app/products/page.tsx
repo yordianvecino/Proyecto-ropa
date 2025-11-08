@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseAdmin, toPublicStorageUrl } from '@/lib/supabase'
+import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
 import { formatCurrency } from '@/lib/format'
 import Link from 'next/link'
 
@@ -30,7 +30,7 @@ async function getProducts(opts?: { page?: number; pageSize?: number; category?:
       }
     } catch {/* fallback to supabase */}
   }
-  const supa = getSupabaseAdmin()
+  const supa = getSupabaseRead()
   if (supa) {
     let categoryId: string | undefined
     if (categorySlug) {

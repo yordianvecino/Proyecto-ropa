@@ -1,5 +1,5 @@
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseAdmin, toPublicStorageUrl } from '@/lib/supabase'
+import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
 
 export type ProductListItem = {
   id: string
@@ -75,7 +75,7 @@ export async function getProducts(options?: GetProductsOptions): Promise<{
   }
 
   // Fallback Supabase: incluye filtro por categoría y orden
-  const supa = getSupabaseAdmin()
+  const supa = getSupabaseRead()
   if (!supa) return { items: [], total: 0, page, pageSize }
 
   let categoryId: string | undefined
@@ -126,7 +126,7 @@ export async function getCategories(): Promise<CategoryItem[]> {
     }
   }
 
-  const supa = getSupabaseAdmin()
+  const supa = getSupabaseRead()
   if (!supa) return []
   const { data, error } = await supa.from('Category').select('slug,name').order('name', { ascending: true })
   if (error || !data) return []

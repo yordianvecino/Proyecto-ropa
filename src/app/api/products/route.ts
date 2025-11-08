@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPrisma } from '@/lib/prisma'
-import { getSupabaseAdmin } from '@/lib/supabase'
+import { getSupabaseRead } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const supa = getSupabaseAdmin()
+  const supa = getSupabaseRead()
   if (!supa) {
     return NextResponse.json({ page, pageSize, total: 0, items: [] })
   }
