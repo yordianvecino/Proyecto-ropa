@@ -4,16 +4,18 @@ import { useCart } from '@/context/CartContext'
 import { formatCurrency } from '@/lib/format'
 import { useState } from 'react'
 import { buildWhatsAppMessage, buildWhatsAppUrl } from '@/lib/whatsapp'
+import { useWhatsAppPhone } from '@/hooks/useWhatsAppPhone'
 
 export default function CarritoPage() {
   const { items, subtotal, totalItems, updateQuantity, removeFromCart, clearCart } = useCart()
   const [error, setError] = useState<string | null>(null)
 
+  const { phone, loading } = useWhatsAppPhone()
+
   function sendWhatsApp() {
     setError(null)
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || ''
     if (!phone) {
-      setError('Configura NEXT_PUBLIC_WHATSAPP_PHONE en .env para habilitar WhatsApp')
+      setError('Configura WHATSAPP_PHONE en .env para habilitar WhatsApp')
       return
     }
     const msg = buildWhatsAppMessage(items)
@@ -61,8 +63,8 @@ export default function CarritoPage() {
             </div>
             <button onClick={clearCart} className="w-full border rounded-lg py-2 mb-2 hover:bg-gray-50">Vaciar</button>
             {error && <p className="text-sm text-red-600 mb-2">{error}</p>}
-            <button onClick={sendWhatsApp} className="w-full bg-green-600 text-white rounded-lg py-2 hover:bg-green-700">
-              Enviar pedido por WhatsApp
+            <button onClick={sendWhatsApp} disabled={!phone || loading} className="w-full bg-green-600 text-white rounded-lg py-2 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? 'Cargando número…' : 'Enviar pedido por WhatsApp'}
             </button>
           </aside>
         </div>

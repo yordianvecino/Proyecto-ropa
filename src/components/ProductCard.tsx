@@ -3,6 +3,7 @@
 import { useCart } from '@/context/CartContext'
 import type { Product } from '@/types'
 import { buildWhatsAppMessage, buildWhatsAppUrl } from '@/lib/whatsapp'
+import { useWhatsAppPhone } from '@/hooks/useWhatsAppPhone'
 
 export function AddButton({ product }: { product: Product }) {
   const { addToCart } = useCart()
@@ -14,8 +15,8 @@ export function AddButton({ product }: { product: Product }) {
 }
 
 export function WhatsAppButton({ product, quantity = 1 }: { product: Product, quantity?: number }) {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || ''
-  const disabled = !phone
+  const { phone, loading } = useWhatsAppPhone()
+  const disabled = !phone || loading
   const handleClick = () => {
     if (!phone) return
     const msg = buildWhatsAppMessage([{ product, quantity }])
@@ -26,10 +27,10 @@ export function WhatsAppButton({ product, quantity = 1 }: { product: Product, qu
     <button
       onClick={handleClick}
       disabled={disabled}
-  title={disabled ? 'Configura NEXT_PUBLIC_WHATSAPP_PHONE en .env' : 'Comprar por WhatsApp'}
+      title={disabled ? 'Configura WHATSAPP_PHONE en .env o espera carga' : 'Comprar por WhatsApp'}
       className={`border border-green-600 text-green-700 hover:bg-green-50 px-3 py-2 rounded-lg transition-colors ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-      WhatsApp
+      {loading ? 'Cargando…' : 'WhatsApp'}
     </button>
   )
 }
