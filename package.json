@@ -2,6 +2,8 @@
 	"name": "proyecto-ropa-cristiana",
 	"version": "0.1.0",
 	"private": true,
+	"packageManager": "yarn@3.6.4",
+	"engines": { "node": ">=18 <21" },
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
