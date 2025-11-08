@@ -1,0 +1,16 @@
+# Dependencias y builds
+node_modules/
+.next/
+out/
+dist/
+
+# Entornos y claves
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
