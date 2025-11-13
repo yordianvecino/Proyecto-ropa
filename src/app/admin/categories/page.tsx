@@ -56,6 +56,7 @@ export default function AdminCategoriesPage() {
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Slug</th>
               <th className="px-4 py-2">Acciones</th>
+              <th className="px-4 py-2">Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -65,6 +66,21 @@ export default function AdminCategoriesPage() {
                 <td className="px-4 py-2">{c.slug}</td>
                 <td className="px-4 py-2">
                   <Link className="text-brand-rose hover:underline" href={`/admin/categories/${c.id}`}>Editar</Link>
+                </td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={async () => {
+                      if (!confirm('¿Eliminar categoría? Los productos asociados quedarán sin categoría.')) return
+                      try {
+                        const res = await fetch(`/api/admin/categories/${c.id}`, { method: 'DELETE', credentials: 'include' })
+                        if (!res.ok) alert('No se pudo eliminar')
+                        await load()
+                      } catch {
+                        alert('Error al eliminar')
+                      }
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50"
+                  >Eliminar</button>
                 </td>
               </tr>
             ))}

@@ -1,5 +1,6 @@
 import { getPrisma } from '@/lib/prisma'
 import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
+import { sampleProducts, sampleCategories } from '@/data/local-sample'
 
 export type ProductListItem = {
   id: string
@@ -57,13 +58,13 @@ export async function getProducts(options?: GetProductsOptions): Promise<{
       const items: ProductListItem[] = rows.map((p: {
         id: string
         name: string
-        price: number // almacenado en centavos
+        price: number // almacenado directamente en pesos
         imageUrl: string | null
         category: { name: string } | null
       }) => ({
         id: p.id,
         name: p.name,
-        price: p.price / 100, // convertir de centavos a unidades
+        price: p.price, // ya está en pesos
         imageUrl: toPublicStorageUrl(p.imageUrl),
         category: p.category?.name ?? null,
       }))
@@ -76,7 +77,22 @@ export async function getProducts(options?: GetProductsOptions): Promise<{
 
   // Fallback Supabase: incluye filtro por categoría y orden
   const supa = getSupabaseRead()
-  if (!supa) return { items: [], total: 0, page, pageSize }
+  if (!supa) {
+    // Fallback a datos locales si no hay BD
+    const filtered = sampleProducts.filter(p => p.active && (!options?.categorySlug || sampleCategories.find(c => c.slug === options.categorySlug && c.id === p.categoryId)))
+    const sorted = [...filtered].sort((a,b) => {
+      if (options?.sort === 'price-asc') return a.price - b.price
+      if (options?.sort === 'price-desc') return b.price - a.price
+      return 0
+    })
+    const slice = sorted.slice(skip, skip + pageSize)
+    return {
+      items: slice.map(p => ({ id: p.id, name: p.name, price: p.price, imageUrl: toPublicStorageUrl(p.imageUrl), category: sampleCategories.find(c => c.id === p.categoryId)?.name || null })),
+      total: filtered.length,
+      page,
+      pageSize,
+    }
+  }
 
   let categoryId: string | undefined
   if (options?.categorySlug) {
@@ -107,7 +123,7 @@ export async function getProducts(options?: GetProductsOptions): Promise<{
   const items: ProductListItem[] = (data ?? []).map((p: any) => ({
     id: p.id,
     name: p.name,
-    price: (p.price ?? 0) / 100,
+    price: (p.price ?? 0),
     imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
     category: p.category?.name ?? null,
   }))
@@ -127,7 +143,9 @@ export async function getCategories(): Promise<CategoryItem[]> {
   }
 
   const supa = getSupabaseRead()
-  if (!supa) return []
+  if (!supa) {
+    return sampleCategories.map(c => ({ slug: c.slug, name: c.name }))
+  }
   const { data, error } = await supa.from('Category').select('slug,name').order('name', { ascending: true })
   if (error || !data) return []
   return data.map((c: any) => ({ slug: c.slug, name: c.name }))

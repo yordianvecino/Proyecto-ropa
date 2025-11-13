@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import { formatCurrency } from '@/lib/format'
+import { formatCentsCurrency } from '@/lib/format'
 import { useState, useEffect, useCallback } from 'react'
 
 type Product = {
@@ -84,6 +84,7 @@ export default function AdminProductsPage() {
               <th className="px-4 py-2">Destacado</th>
               <th className="px-4 py-2">Activo</th>
               <th className="px-4 py-2">Acciones</th>
+              <th className="px-4 py-2">Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -101,7 +102,7 @@ export default function AdminProductsPage() {
                 </td>
                 <td className="px-4 py-2 font-medium">{p.name}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{p.categoryNombre || '–'}</td>
-                <td className="px-4 py-2">{formatCurrency(p.price / 100)}</td>
+                <td className="px-4 py-2">{formatCentsCurrency(p.price)}</td>
                 <td className="px-4 py-2">
                   <button
                     onClick={async () => {
@@ -125,6 +126,21 @@ export default function AdminProductsPage() {
                 <td className="px-4 py-2">{p.active ? 'Sí' : 'No'}</td>
                 <td className="px-4 py-2">
                   <Link className="text-christian-purple hover:underline" href={`/admin/products/${p.id}`}>Editar</Link>
+                </td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={async () => {
+                      if (!confirm('¿Eliminar producto? Esta acción no se puede deshacer.')) return
+                      try {
+                        const res = await fetch(`/api/admin/products/${p.id}`, { method: 'DELETE', credentials: 'include' })
+                        if (!res.ok) alert('No se pudo eliminar')
+                        await load()
+                      } catch {
+                        alert('Error al eliminar')
+                      }
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50"
+                  >Eliminar</button>
                 </td>
               </tr>
             ))}

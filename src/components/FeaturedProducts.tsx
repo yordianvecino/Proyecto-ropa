@@ -1,8 +1,9 @@
 import { getPrisma } from '@/lib/prisma'
 import { getSupabaseRead, toPublicStorageUrl } from '@/lib/supabase'
+import { getSampleFeatured } from '@/data/local-sample'
 import { unstable_noStore as noStore } from 'next/cache'
-import { AddButton, WhatsAppButton } from '@/components/ProductCard'
-import { formatCurrency } from '@/lib/format'
+import { ProductCard } from '@/components/ProductCard'
+// Se usa ProductCard que ya formatea COP sin símbolo
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -45,7 +46,7 @@ async function getFeatured(): Promise<ProductLike[]> {
         return data.map((p: any) => ({
           id: p.id,
           name: p.name,
-          price: (p.price ?? 0) / 100,
+          price: (p.price ?? 0),
           imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
@@ -64,7 +65,7 @@ async function getFeatured(): Promise<ProductLike[]> {
         return res2.data.map((p: any) => ({
           id: p.id,
           name: p.name,
-          price: (p.price ?? 0) / 100,
+          price: (p.price ?? 0),
           imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
@@ -91,7 +92,7 @@ async function getFeatured(): Promise<ProductLike[]> {
         return byFeatured.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
           id: p.id,
           name: p.name,
-          price: p.price / 100,
+          price: p.price,
           imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
@@ -107,7 +108,7 @@ async function getFeatured(): Promise<ProductLike[]> {
         return recent.map((p: { id: string; name: string; price: number; imageUrl: string | null; category: { name: string } | null }) => ({
           id: p.id,
           name: p.name,
-          price: p.price / 100,
+          price: p.price,
           imageUrl: toPublicStorageUrl(p.imageUrl) ?? null,
           category: p.category?.name ?? undefined,
         }))
@@ -115,6 +116,11 @@ async function getFeatured(): Promise<ProductLike[]> {
     } catch {
       // sin datos
     }
+  }
+  // 3. Fallback local sample
+  const local = getSampleFeatured()
+  if (local.length > 0) {
+    return local.map(p => ({ id: p.id, name: p.name, price: p.price, imageUrl: toPublicStorageUrl(p.imageUrl) ?? null, category: undefined }))
   }
   return []
 }
@@ -128,26 +134,8 @@ export default async function FeaturedProducts() {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Productos Destacados</h2>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <div key={product.id} className="border rounded-lg shadow-sm bg-white overflow-hidden flex flex-col">
-              {product.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover" />
-              ) : (
-                <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">Sin imagen</div>
-              )}
-              <div className="p-4 flex flex-col flex-1">
-                <span className="text-sm text-gray-500 font-medium">{product.category ?? ''}</span>
-                <h3 className="text-lg font-semibold mt-2 mb-3 line-clamp-2">{product.name}</h3>
-                <div className="mt-auto flex items-center justify-between gap-2">
-                  <span className="text-2xl font-bold text-brand-gold">{formatCurrency(product.price)}</span>
-                  <div className="flex items-center gap-2">
-                    <WhatsAppButton product={{ id: product.id, name: product.name, price: product.price, image: product.imageUrl ?? undefined, category: product.category ?? undefined }} />
-                    <AddButton product={{ id: product.id, name: product.name, price: product.price, image: product.imageUrl ?? undefined, category: product.category ?? undefined }} />
-                  </div>
-                </div>
-              </div>
-            </div>
+          {products.map(p => (
+            <ProductCard key={p.id} product={{ id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl ?? undefined, category: p.category ?? undefined }} />
           ))}
         </div>
       </div>

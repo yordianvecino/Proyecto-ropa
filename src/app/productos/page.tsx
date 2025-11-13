@@ -1,9 +1,9 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import Link from 'next/link'
-import { AddButton, WhatsAppButton } from '@/components/ProductCard'
-import { formatCurrency } from '@/lib/format'
+import { ProductCard } from '@/components/ProductCard'
 import { getProducts, getCategories } from '@/lib/products'
+import { sampleProducts, sampleCategories } from '@/data/local-sample'
 
 export const metadata = {
   title: 'Productos | Ropa Cristiana',
@@ -27,10 +27,31 @@ export default async function ProductosPage({
   const sort = (Array.isArray(searchParams?.sort) ? searchParams?.sort[0] : searchParams?.sort) as 'newest' | 'price-asc' | 'price-desc' | undefined
   const pageSize = 12
 
-  const [{ items, total }, categories] = await Promise.all([
+  const [{ items: rawItems, total }, categories] = await Promise.all([
     getProducts({ page, pageSize, categorySlug: category, sort }),
     getCategories(),
   ])
+
+  // Relleno con datos de prueba si hay pocos resultados (solo primera página)
+  const items = rawItems.length < pageSize && page === 1
+    ? [
+        ...rawItems,
+        ...sampleProducts
+          .filter(
+            sp =>
+              !rawItems.find(r => r.id === sp.id) &&
+              (!category || sampleCategories.find(sc => sc.slug === category && sc.id === sp.categoryId))
+          )
+          .slice(0, pageSize - rawItems.length)
+          .map(sp => ({
+            id: sp.id,
+            name: sp.name,
+            price: sp.price,
+            imageUrl: sp.imageUrl,
+            category: sampleCategories.find(sc => sc.id === sp.categoryId)?.name || null,
+          })),
+      ]
+    : rawItems
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const currentCategory = categories.find((c) => c.slug === category)
@@ -77,28 +98,8 @@ export default async function ProductosPage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((product) => (
-              <div key={product.id} className="rounded-lg border bg-white overflow-hidden">
-                {product.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={product.imageUrl} alt={product.name} className="h-48 w-full object-cover bg-gray-100" />
-                ) : (
-                  <div className="h-48 bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-400">Imagen</span>
-                  </div>
-                )}
-                <div className="p-4">
-                  <span className="text-xs text-brand-rose">{product.category ?? ''}</span>
-                  <h3 className="mt-1 font-semibold text-gray-900">{product.name}</h3>
-                  <div className="mt-3 flex items-center justify-between gap-2">
-                    <span className="text-lg font-bold text-brand-gold">{formatCurrency(product.price)}</span>
-                    <div className="flex items-center gap-2">
-                      <WhatsAppButton product={{ id: product.id, name: product.name, price: product.price, image: product.imageUrl ?? undefined, category: product.category ?? undefined }} />
-                      <AddButton product={{ id: product.id, name: product.name, price: product.price, image: product.imageUrl ?? undefined, category: product.category ?? undefined }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {items.map(p => (
+              <ProductCard key={p.id} product={{ id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl ?? undefined, category: p.category ?? undefined }} />
             ))}
           </div>
 

@@ -23,7 +23,7 @@ async function getProducts(opts?: { page?: number; pageSize?: number; category?:
           id: p.id,
           name: p.name,
           slug: p.slug,
-          price: p.price / 100,
+          price: p.price,
           imageUrl: p.imageUrl,
           category: p.category?.name ?? null,
         }))
@@ -50,7 +50,7 @@ async function getProducts(opts?: { page?: number; pageSize?: number; category?:
         id: p.id,
         name: p.name,
         slug: p.slug,
-        price: (p.price ?? 0) / 100,
+        price: (p.price ?? 0),
         imageUrl: p.imageUrl ?? null,
         category: p.category?.name ?? null,
       }))

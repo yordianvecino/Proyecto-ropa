@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { formatCurrency } from '@/lib/format'
+import { formatCentsCurrency } from '@/lib/format'
 
 type Item = { id: string; name: string; slug: string; price: number; imageUrl?: string | null; category?: string | null }
 
@@ -49,7 +49,7 @@ export default function ProductsPreview({ pageSize = 8 }: { pageSize?: number })
               )}
               <div className="text-sm font-medium line-clamp-2">{p.name}</div>
               <div className="text-xs text-gray-600 mb-2">{p.category || ''}</div>
-              <div className="text-brand-gold font-bold">{formatCurrency((p.price || 0) / 100)}</div>
+              <div className="text-brand-gold font-bold">{formatCentsCurrency(p.price || 0)}</div>
             </div>
           ))}
           {items.length === 0 && (
