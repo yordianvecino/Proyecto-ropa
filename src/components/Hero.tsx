@@ -1,9 +1,12 @@
 import { Crown } from 'lucide-react'
 import RandomVerse from './RandomVerse'
+import FaithParallax from './FaithParallax'
 const Hero = () => {
   return (
-    <section className="relative py-20 bg-brand-blush">
-      <div className="container mx-auto px-4 text-center">
+    <section className="relative py-20 bg-brand-blush overflow-hidden">
+      {/* Parallax decorativo */}
+      <FaithParallax />
+      <div className="container mx-auto px-4 text-center relative z-10">
         <div className="inline-flex items-center gap-3 mb-4">
           <span className="font-accent text-5xl leading-none text-brand-black">moda celestial</span>
           <Crown size={28} className="text-brand-gold" />

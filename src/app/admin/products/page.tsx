@@ -23,6 +23,7 @@ export default function AdminProductsPage() {
   const [page, setPage] = useState<number>(1)
   const [pageSize] = useState<number>(10)
   const [q, setQ] = useState<string>('')
+  const [onlyFeatured, setOnlyFeatured] = useState<boolean>(false)
 
   const load = useCallback(async () => {
     try {
@@ -30,6 +31,7 @@ export default function AdminProductsPage() {
       setError(null)
       const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) })
       if (q) params.set('q', q)
+      if (onlyFeatured) params.set('featured', '1')
       const res = await fetch(`/api/admin/products?${params.toString()}` , { credentials: 'include', cache: 'no-store' })
       if (res.status === 401 || res.status === 403) {
         setError('Sesión expirada o no autenticado. Inicia sesión para ver los productos.')
@@ -45,7 +47,7 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, pageSize, q])
+  }, [page, pageSize, q, onlyFeatured])
 
   useEffect(() => { void load() }, [load])
 
@@ -66,6 +68,10 @@ export default function AdminProductsPage() {
               <button onClick={() => { setQ(''); setPage(1) }} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400">×</button>
             )}
           </div>
+          <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" checked={onlyFeatured} onChange={(e) => { setOnlyFeatured(e.target.checked); setPage(1) }} />
+            Solo destacados
+          </label>
           <button onClick={load} className="border rounded-lg px-3 py-2 text-sm hover:bg-gray-50">Refrescar</button>
           <Link href="/products" className="border rounded-lg px-3 py-2 text-sm hover:bg-gray-50">Ver tienda</Link>
           <Link href="/admin/products/new" className="bg-brand-rose text-white px-4 py-2 rounded-lg hover:bg-brand-pink">Nuevo producto</Link>

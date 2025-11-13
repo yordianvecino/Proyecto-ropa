@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, Number(searchParams.get('page') ?? 1))
     const pageSize = Math.min(50, Math.max(1, Number(searchParams.get('pageSize') ?? 20)))
     const q = (searchParams.get('q') ?? '').trim()
+    const featured = searchParams.get('featured') === '1'
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
@@ -45,6 +46,9 @@ export async function GET(req: NextRequest) {
 
     if (q) {
       query = query.ilike('name', `%${q}%`)
+    }
+    if (featured) {
+      query = query.eq('featured', true)
     }
 
     const { data, count, error } = await query
@@ -73,9 +77,11 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, Number(searchParams.get('page') ?? 1))
   const pageSize = Math.min(50, Math.max(1, Number(searchParams.get('pageSize') ?? 20)))
   const q = (searchParams.get('q') ?? '').trim()
+  const featured = searchParams.get('featured') === '1'
   const skip = (page - 1) * pageSize
 
-  const where = q ? { name: { contains: q, mode: 'insensitive' as const } } : undefined
+  const where: any = q ? { name: { contains: q, mode: 'insensitive' as const } } : {}
+  if (featured) where.featured = true
 
   const [items, total] = await Promise.all([
     prisma.product.findMany({ where, orderBy: { createdAt: 'desc' }, include: { category: true }, skip, take: pageSize }),
